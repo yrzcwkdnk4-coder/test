@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎭 朋辈部门人格测试 · 招新版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'PingFang SC', Roboto, system-ui, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, #fde8f0 0%, #e8f0fe 100%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 720px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 48px;
+            padding: 32px 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25),
+                        inset 0 1px 2px rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        /* 头部 */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6a5acd, #ff6b9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .progress-badge {
+            background: rgba(0, 0, 0, 0.05);
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #444;
+            backdrop-filter: blur(4px);
+        }
+
+        /* 进度条 */
+        .progress-bar-bg {
+            width: 100%;
+            height: 6px;
+            background: rgba(0, 0, 0, 0.08);
+            border-radius: 10px;
+            margin-bottom: 32px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #6a5acd, #ff6b9d);
+            border-radius: 10px;
+            transition: width 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        /* 问题卡片 */
+        .question-area {
+            min-height: 340px;
+            display: flex;
+            flex-direction: column;
+        }
+        .q-text {
+            font-size: 22px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 28px;
+            line-height: 1.4;
+        }
+        .q-text .tag {
+            display: inline-block;
+            background: #1a1a2e;
+            color: white;
+            font-size: 14px;
+            padding: 2px 14px;
+            border-radius: 40px;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+        }
+        .opt-btn {
+            background: white;
+            border: 2px solid rgba(0, 0, 0, 0.04);
+            padding: 16px 22px;
+            border-radius: 60px;
+            font-size: 17px;
+            font-weight: 500;
+            color: #1a1a2e;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .opt-btn:hover:not(:disabled) {
+            transform: translateY(-2px) scale(1.01);
+            border-color: #6a5acd;
+            box-shadow: 0 12px 28px -8px rgba(106, 90, 205, 0.2);
+            background: #fafaff;
+        }
+        .opt-btn:active:not(:disabled) {
+            transform: scale(0.97);
+        }
+        .opt-btn .letter {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            background: #f0f0f5;
+            border-radius: 40px;
+            text-align: center;
+            line-height: 32px;
+            font-weight: 700;
+            color: #6a5acd;
+            flex-shrink: 0;
+        }
+        .opt-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            filter: grayscale(0.2);
+        }
+
+        /* 结果页 */
+        .result-box {
+            text-align: center;
+            padding: 12px 0 8px;
+        }
+        .result-emoji {
+            font-size: 72px;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+        .result-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #1a1a2e;
+            margin-bottom: 4px;
+        }
+        .result-mbti {
+            display: inline-block;
+            background: #1a1a2e;
+            color: white;
+            padding: 6px 24px;
+            border-radius: 60px;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+        }
+        .result-desc {
+            font-size: 18px;
+            color: #2d2d44;
+            margin-bottom: 24px;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 16px 20px;
+            border-radius: 32px;
+            backdrop-filter: blur(4px);
+        }
+        .result-desc span {
+            font-weight: 600;
+            color: #6a5acd;
+        }
+        .result-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 28px;
+        }
+        .result-tags span {
+            background: white;
+            padding: 6px 18px;
+            border-radius: 60px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+        .restart-btn {
+            background: #1a1a2e;
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 60px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 8px 24px rgba(26, 26, 46, 0.2);
+        }
+        .restart-btn:hover {
+            transform: scale(1.03);
+            background: #2d2d5e;
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #888;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="app">
+    <!-- 头部 -->
+    <div class="header">
+        <h1>🧩 部门人格匹配</h1>
+        <div class="progress-badge" id="stepIndicator">1 / 6</div>
+    </div>
+
+    <!-- 进度条 -->
+    <div class="progress-bar-bg">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <!-- 动态区域 -->
+    <div id="dynamicContent">
+        <!-- 由 JS 渲染 -->
+    </div>
+    <div class="footer-note">✨ 纯属娱乐 · 招新向 · 找到你的组织天赋</div>
+</div>
+
+<script>
+    // -------- 数据配置 --------
+    const DEPARTMENTS = [
+        { id: 0, name: '策划部', emoji: '🧠', mbti: 'ENTJ', label: '脑洞军师', 
+          desc: '大局掌控者，擅长把天马行空变成落地执行。', 
+          tags: ['📋 策划活动', '✍️ 撰写策划书', '🤝 辅助跟进', '🚀 协助各部门'] },
+        { id: 1, name: '秘书部', emoji: '📚', mbti: 'ISFJ', label: '细心管家',
+          desc: '团队的稳定器，用细致和条理守护每一次活动。',
+          tags: ['📨 编辑通知', '🏛️ 场地申请', '📝 会议记录', '📂 资料整理'] },
+        { id: 2, name: '网编部', emoji: '📱', mbti: 'ENFP', label: '流量捕手',
+          desc: '审美在线，用镜头和文字把精彩传递给所有人。',
+          tags: ['📲 制作推文', '📰 新闻稿', '📸 拍照录像', '✂️ 视频剪辑'] },
+        { id: 3, name: '外联部', emoji: '💰', mbti: 'ESTP', label: '社交悍匪',
+          desc: '行走的ATM机和团建发动机，人脉与财力两手抓。',
+          tags: ['💵 财务管理', '🤝 拉取赞助', '📦 物资搬运', '🎉 策划团建', '👤 邀请嘉宾'] },
+        { id: 4, name: '宣传部', emoji: '🎨', mbti: 'ESFP', label: '门面担当',
+          desc: '用色彩和创意装点门面，让每一场活动未办先火。',
+          tags: ['🖼️ 设计海报', '🎈 布置场地', '🛍️ 采购物资', '📋 维护展板'] },
+        { id: 5, name: '咨询部', emoji: '🎤', mbti: 'ENFJ', label: '控场王者',
+          desc: '天生主角气场，hold住全场也温暖人心。',
+          tags: ['🎙️ 主持控场', '📌 前期准备', '📚 培训工作'] }
+    ];
+
+    // 6道有趣的情景题（每个选项映射部门ID）
+    const QUESTIONS = [
+        { text: '小组作业需要写一份活动策划案，大家毫无头绪时，你通常会？',
+          options: [
+            { label: 'A. 立刻搭框架、定分工，带大家理清主线', deptId: 0 }, // 策划
+            { label: 'B. 默默打开文档，负责整合排版和检查错别字', deptId: 1 }, // 秘书
+            { label: 'C. 先刷一圈小红书找灵感，再提出视觉创意方向', deptId: 2 } // 网编
+          ] },
+        { text: '社团聚餐结束，大家提议搞个内部团建，你第一反应是？',
+          options: [
+            { label: 'A. 主动联系热门轰趴馆，顺便跟老板砍个团购价', deptId: 3 }, // 外联
+            { label: 'B. 立刻掏出手机设计一份活动流程表和物料清单', deptId: 0 }, // 策划
+            { label: 'C. 举手表示可以负责当天的主持和气氛组', deptId: 5 } // 咨询
+          ] },
+        { text: '刷朋友圈/短视频时，你最喜欢看哪类内容？',
+          options: [
+            { label: 'A. 高颜值排版的手账/笔记分享', deptId: 4 }, // 宣传 (海报/布置)
+            { label: 'B. 卡点转场、运镜炫酷的Vlog', deptId: 2 }, // 网编
+            { label: 'C. 辩论赛、脱口秀或演讲类口才视频', deptId: 5 } // 咨询
+          ] },
+        { text: '活动开始前20分钟，突然发现装饰用的气球不够了，你会？',
+          options: [
+            { label: 'A. 冲去最近超市买，顺路跟老板砍价开发票', deptId: 3 }, // 外联 (采购搬运)
+            { label: 'B. 迅速用现有材料改造，设计出更简约高级的布置', deptId: 4 }, // 宣传
+            { label: 'C. 安抚慌乱的队友，同时联系会场人员协调备用物资', deptId: 1 } // 秘书 (场地/协调)
+          ] },
+        { text: '你更擅长用哪种方式为团队做贡献？',
+          options: [
+            { label: 'A. 用精彩的照片和文字记录高光时刻，发推文宣传', deptId: 2 }, // 网编
+            { label: 'B. 制作精美的PPT或海报，把信息可视化', deptId: 4 }, // 宣传
+            { label: 'C. 细致地核对流程表、物资清单和人员分工表', deptId: 1 } // 秘书
+          ] },
+        { text: '如果让你组织一次校园随机舞蹈/快闪活动，你最核心的职责是？',
+          options: [
+            { label: 'A. 写完整的活动策划案，并拉上各部门配合', deptId: 0 }, // 策划
+            { label: 'B. 全场主持控场，带动气氛并应对突发状况', deptId: 5 }, // 咨询
+            { label: 'C. 负责与学校社团、街舞社等嘉宾对接邀请', deptId: 3 } // 外联 (邀请嘉宾)
+          ] }
+    ];
+
+    // -------- 应用状态 --------
+    let currentStep = 0;
+    let scores = new Array(6).fill(0); // 6个部门计数
+    let userAnswers = [];
+
+    const container = document.getElementById('dynamicContent');
+    const stepIndicator = document.getElementById('stepIndicator');
+    const progressFill = document.getElementById('progressFill');
+
+    // -------- 渲染函数 --------
+    function render() {
+        if (currentStep < QUESTIONS.length) {
+            renderQuestion();
+        } else {
+            renderResult();
+        }
+        // 更新进度
+        stepIndicator.textContent = `${Math.min(currentStep + 1, QUESTIONS.length)} / ${QUESTIONS.length}`;
+        const pct = (currentStep / QUESTIONS.length) * 100;
+        progressFill.style.width = pct + '%';
+    }
+
+    function renderQuestion() {
+        const q = QUESTIONS[currentStep];
+        let html = `<div class="question-area">
+            <div class="q-text">
+                <div class="tag">🎯 场景 ${currentStep + 1}</div>
+                ${q.text}
+            </div>
+            <div class="options">`;
+        
+        q.options.forEach((opt, idx) => {
+            const letter = String.fromCharCode(65 + idx); // A,B,C
+            html += `<button class="opt-btn" onclick="selectOption(${idx})">
+                <span class="letter">${letter}</span> ${opt.label}
+            </button>`;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+    }
+
+    // 选择选项
+    window.selectOption = function(optIdx) {
+        const q = QUESTIONS[currentStep];
+        const selected = q.options[optIdx];
+        // 累加分数
+        scores[selected.deptId] += 1;
+        userAnswers.push(selected);
+        // 进入下一题
+        currentStep++;
+        render();
+    };
+
+    // -------- 结果渲染（含MBTI风格） --------
+    function renderResult() {
+        // 找出最高分部门 (如有并列，取第一个)
+        let maxScore = -1;
+        let bestDeptId = 0;
+        scores.forEach((score, id) => {
+            if (score > maxScore) {
+                maxScore = score;
+                bestDeptId = id;
+            }
+        });
+
+        const dept = DEPARTMENTS[bestDeptId];
+        // 计算匹配度（满分6题，显示百分比）
+        const matchPercent = Math.round((maxScore / 6) * 100);
+
+        // 生成有趣的副词描述
+        let vibe = '';
+        if (matchPercent >= 83) vibe = '🔮 天选之人！';
+        else if (matchPercent >= 67) vibe = '✨ 完美契合！';
+        else if (matchPercent >= 50) vibe = '🌟 潜力无限！';
+        else vibe = '🧚 隐藏天赋！';
+
+        let html = `
+            <div class="result-box">
+                <div class="result-emoji">${dept.emoji}</div>
+                <div class="result-title">${dept.name}</div>
+                <div class="result-mbti">${dept.mbti} · ${dept.label}</div>
+                <div style="font-size:15px; color:#6a5acd; font-weight:600; margin-bottom:6px;">匹配度 ${matchPercent}% ${vibe}</div>
+                <div class="result-desc">
+                    ${dept.desc}
+                </div>
+                <div class="result-tags">
+                    ${dept.tags.map(tag => `<span>${tag}</span>`).join('')}
+                </div>
+                <div style="font-size:15px; color:#555; margin-bottom:20px; background:#f0f0ff; padding:12px; border-radius:60px;">
+                    💡 你的选择里，${dept.name}的气质最突出！
+                </div>
+                <button class="restart-btn" onclick="resetTest()">🔄 重新测试</button>
+            </div>
+        `;
+        container.innerHTML = html;
+        progressFill.style.width = '100%';
+        stepIndicator.textContent = '🎉 结果';
+    }
+
+    // 重置
+    window.resetTest = function() {
+        currentStep = 0;
+        scores = new Array(6).fill(0);
+        userAnswers = [];
+        render();
+        // 滚动到顶部
+        document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
+    };
+
+    // 初始化
+    render();
+</script>
+
+</body>
+</html>
